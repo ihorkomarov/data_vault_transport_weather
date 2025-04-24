@@ -1,0 +1,23 @@
+version: 2
+
+models:
+  - name: hub_route
+    tests:
+      - unique:
+          column_name: route_hk
+  - name: hub_service
+    tests:
+      - unique:
+          column_name: service_hk
+  - name: hub_stop
+    tests:
+      - unique:
+          column_name: stop_hk
+  - name: hub_trip
+    tests:
+      - unique:
+          column_name: trip_hk
+  - name: hub_weather
+    tests:
+      - unique:
+          column_name: weather_hk
