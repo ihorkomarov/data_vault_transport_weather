@@ -4,9 +4,9 @@ with stop_times as (
 )
 
 select
-    trip_id,
+    cast(trip_id as text) as trip_id,
     arrival_time,
     departure_time,
-    stop_id,
+    cast(stop_id as text) as stop_id,
     stop_sequence
 from stop_times

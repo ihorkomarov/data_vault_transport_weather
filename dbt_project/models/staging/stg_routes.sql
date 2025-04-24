@@ -4,7 +4,7 @@ with routes as (
 )
 
 select
-    route_id,
+    cast(route_id as text) as route_id,
     route_short_name,
     route_long_name,
     route_type

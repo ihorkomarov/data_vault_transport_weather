@@ -4,9 +4,10 @@ with trips as (
 )
 
 select
+    md5(trip_id || '-' || route_id) as link_trip_route_hk,
     md5(trip_id) as trip_hk,
-    trip_id as trip_id_bk,
+    md5(route_id) as route_hk,
     current_timestamp as load_ts,
     'dbt' as record_source
 from trips
-group by trip_id
+group by trip_id, route_id

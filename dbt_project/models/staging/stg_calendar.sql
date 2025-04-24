@@ -4,7 +4,7 @@ with calendar as (
 )
 
 select
-    service_id,
+    cast(service_id as text) as service_id,
     monday,
     tuesday,
     wednesday,

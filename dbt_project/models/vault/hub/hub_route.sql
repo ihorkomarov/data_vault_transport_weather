@@ -1,7 +1,12 @@
+with routes as (
+    select *
+    from {{ ref('stg_routes') }}
+)
+
 select
     md5(route_id) as route_hk,
     route_id as route_id_bk,
     current_timestamp as load_ts,
     'dbt' as record_source
-from {{ ref('stg_routes') }}
+from routes
 group by route_id

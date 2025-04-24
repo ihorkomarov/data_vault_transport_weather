@@ -5,7 +5,7 @@ with stops as (
 )
 
 select
-    stop_id,
+    cast(stop_id as text) as stop_id,
     stop_name,
     stop_lat,
     stop_lon

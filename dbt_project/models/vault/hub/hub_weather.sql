@@ -1,7 +1,12 @@
+with weather as (
+    select *
+    from {{ ref('stg_weather') }}
+)
+
 select
-    md5(cast(weather_timestamp as TEXT)) as weather_hk,
+    md5(cast(weather_timestamp as text)) as weather_hk,
     weather_timestamp as weather_timestamp_bk,
     current_timestamp as load_ts,
     'dbt' as record_source
-from {{ ref('stg_weather') }}
+from weather
 group by weather_timestamp

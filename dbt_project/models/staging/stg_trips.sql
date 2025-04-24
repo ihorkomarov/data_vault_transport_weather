@@ -4,9 +4,9 @@ with trips as (
 )
 
 select
-    route_id,
-    service_id,
-    trip_id,
+    cast(route_id as text) as route_id,
+    cast(service_id as text) as service_id,
+    cast(trip_id as text) as trip_id,
     trip_headsign,
     direction_id
 from trips
