@@ -7,6 +7,6 @@ select
     md5(cast(weather_timestamp as text)) as weather_hk,
     weather_timestamp as weather_timestamp_bk,
     current_timestamp as load_ts,
-    'dbt' as record_source
+    'OpenWeather' as record_source
 from weather
 group by weather_timestamp

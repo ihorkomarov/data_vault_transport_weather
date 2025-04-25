@@ -8,6 +8,6 @@ select
     md5(trip_id) as trip_hk,
     md5(stop_id) as stop_hk,
     current_timestamp as load_ts,
-    'dbt' as record_source
+    'hvv gtfs' as record_source
 from stop_times
 group by trip_id, stop_id
