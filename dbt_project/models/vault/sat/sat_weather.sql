@@ -1,20 +1,20 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = 'datetime, hashdiff',
+    unique_key = 'weather_timestamp, hashdiff',
     on_schema_change = 'ignore'
 ) }}
 
 with source as (
     select
-        datetime,
-        temp,
-        feelslike,
+        weather_timestamp,
+        temp_celsius,
+        feelslike_celsius,
         humidity,
         dew,
         precip,
         precipprob,
-        snow,
-        snowdepth,
+        snow_cm,
+        snowdepth_cm,
         preciptype,
         windgust,
         windspeed,
@@ -29,14 +29,14 @@ with source as (
         current_timestamp as load_ts,      -- Wann geladen
         'openweather' as record_source,    -- Quelle
         md5(
-            coalesce(temp::text, '')
-            || coalesce(feelslike::text, '')
+            coalesce(temp_celsius::text, '')
+            || coalesce(feelslike_celsius::text, '')
             || coalesce(humidity::text, '')
             || coalesce(dew::text, '')
             || coalesce(precip::text, '')
             || coalesce(precipprob::text, '')
-            || coalesce(snow::text, '')
-            || coalesce(snowdepth::text, '')
+            || coalesce(snow_cm::text, '')
+            || coalesce(snowdepth_cm::text, '')
             || coalesce(preciptype, '')
             || coalesce(windgust::text, '')
             || coalesce(windspeed::text, '')
@@ -59,7 +59,7 @@ filtered as (
         where not exists (
             select 1 from {{ this }}
             where
-                {{ this }}.datetime = source.datetime
+                {{ this }}.weather_timestamp = source.weather_timestamp
                 and {{ this }}.hashdiff = source.hashdiff
         )
     {% endif %}

@@ -26,6 +26,8 @@ calendar_df = pd.read_csv(base_path + "calendar.txt")
 # Verbindung zur PostgreSQL DB
 engine = create_engine(f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@localhost:5432/postgres")
 
+
+
 # Tabellen schreiben
 stops_df.to_sql("raw_stops", engine, if_exists="replace", index=False)
 routes_df.to_sql("raw_routes", engine, if_exists="replace", index=False)
