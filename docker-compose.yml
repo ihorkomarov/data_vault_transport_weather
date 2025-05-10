@@ -1,13 +1,76 @@
 version: "3.8"
 
 services:
-  postgres:
+  postgres-dwh:
     image: postgres:15
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     env_file: "db.env"
+    networks:
+      - airflow_net
+
+  postgres-airflow:
+    image: postgres:15
+    env_file: "./airflow/airflow.env"
+    ports:
+      - "5430:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - airflow_net
+
+  airflow-webserver:
+    image: apache/airflow:2.9.0-python3.12
+    depends_on:
+      postgres-airflow:
+        condition: service_healthy
+    env_file: "./airflow/airflow.env"
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/requirements.txt:/requirements.txt
+      - ./.dbt:/home/airflow/.dbt
+      - ../dbt_project/:/opt/airflow/dbt
+    ports:
+      - "8080:8080"
+    command: >
+      bash -c "
+      pip install --no-cache-dir -r /requirements.txt &&
+      airflow db init &&
+      airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com &&
+      airflow webserver
+      "
+    networks:
+      - airflow_net
+
+  airflow-scheduler:
+    image: apache/airflow:2.9.0-python3.12
+    depends_on:
+      airflow-webserver:
+        condition: service_started
+      postgres-airflow:
+        condition: service_healthy
+    env_file: "./airflow/airflow.env"
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/requirements.txt:/requirements.txt
+      - ./.dbt:/home/airflow/.dbt
+      - ./dbt_project/:/opt/airflow/dbt
+    command: >
+      bash -c "
+      pip install --no-cache-dir -r /requirements.txt &&
+      airflow scheduler
+      "
+    networks:
+      - airflow_net
 
 volumes:
-  pgdata:
+    pgdata:
+
+networks:
+  airflow_net:
