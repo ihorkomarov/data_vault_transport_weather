@@ -1,0 +1,91 @@
+version: 2
+
+models:
+  - name: stg_gtfs__stops
+    description: "GTFS Staging-Tabelle für Haltestellen"
+    columns:
+      - name: stop_id
+        description: "Eindeutige ID der Haltestelle"
+        tests:
+          - not_null
+          - unique
+
+      - name: stop_name
+        description: "Name der Haltestelle"
+        tests:
+          - not_null
+
+  - name: stg_gtfs__routes
+    description: "GTFS Staging-Tabelle für Linien"
+    columns:
+      - name: route_id
+        description: "Eindeutige ID der Route"
+        tests:
+          - not_null
+          - unique
+
+      - name: agency_id
+        description: "Verweis auf die Agentur"
+        tests: []
+
+  - name: stg_gtfs__trips
+    description: "GTFS Staging-Tabelle für Fahrten"
+    columns:
+      - name: trip_id
+        description: "Eindeutige ID der Fahrt"
+        tests:
+          - not_null
+          - unique
+
+      - name: route_id
+        description: "Verweis auf Route"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_gtfs__routes')
+              field: route_id
+
+      - name: service_id
+        description: "Verweis auf Kalender"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_gtfs__calendar')
+              field: service_id
+
+  - name: stg_gtfs__calendar
+    description: "GTFS Staging-Tabelle für Kalenderinformationen"
+    columns:
+      - name: service_id
+        description: "Eindeutige ID für den Service"
+        tests:
+          - not_null
+          - unique
+
+      - name: monday
+        description: "Service am Montag verfügbar"
+        tests: []
+
+  - name: stg_gtfs__stop_times
+    description: "GTFS Staging-Tabelle für Haltestellenzeiten"
+    columns:
+      - name: trip_id
+        description: "Verweis auf Trip"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_gtfs__trips')
+              field: trip_id
+
+      - name: stop_id
+        description: "Verweis auf Haltestelle"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_gtfs__stops')
+              field: stop_id
+
+      - name: stop_sequence
+        description: "Reihenfolge der Haltestellen"
+        tests:
+          - not_null
